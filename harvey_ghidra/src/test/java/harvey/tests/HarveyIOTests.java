@@ -2,6 +2,7 @@
 package harvey.tests;
 
 import harvey.HarveyIO;
+import harvey.HarveyCmds;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -14,19 +15,20 @@ class HarveyIOTests {
 	}
 
 	@Test
-	public void testAddText() {
-		HarveyIO h = new HarveyIO(null);
+	public void testEcho() {
+		HarveyCmds c = new HarveyCmds(null);
+		HarveyIO h = new HarveyIO(null, c);
 
-		h.textCmd.setText("one");
+		h.textCmd.setText("echo one");
 		h.actionPerformed(null);
 
-		assertEquals("\none", h.textArea.getText());
+		assertEquals("\nECHO: one", h.textArea.getText());
 		assertEquals("", h.textCmd.getText());
 
-		h.textCmd.setText("two");
+		h.textCmd.setText("echo two");
 		h.actionPerformed(null);
 
-		assertEquals("\none\ntwo", h.textArea.getText());
+		assertEquals("\nECHO: one\nECHO: two", h.textArea.getText());
 		assertEquals("", h.textCmd.getText());
 	}
 }

@@ -82,12 +82,14 @@ public class HarveyPlugin extends ProgramPlugin {
 
 
 		private DockingAction action;
-		protected HarveyIO harveyIo;
+		public HarveyIO harveyIo;
+		public HarveyCmds cmds;
 
 		public MyProvider(HarveyPlugin plugin, String owner) {
 			super(plugin.getTool(), owner, owner);
 
-			harveyIo = new HarveyIO(plugin);
+			cmds = new HarveyCmds(plugin);
+			harveyIo = new HarveyIO(plugin, cmds);
 			createActions();
 			setVisible(true);
 		}

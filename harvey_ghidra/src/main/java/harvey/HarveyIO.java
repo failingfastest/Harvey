@@ -27,9 +27,11 @@ public class HarveyIO implements ActionListener
 	public JTextField textCmd;
 	public JTextArea textArea;
 	public HarveyPlugin plugin;
+	public HarveyCmds cmds;
 
-	public HarveyIO(HarveyPlugin _plugin) {
+	public HarveyIO(HarveyPlugin _plugin, HarveyCmds _cmds) {
 		plugin = _plugin;
+		cmds = _cmds;
 
 		buildGui();
 	}
@@ -49,7 +51,8 @@ public class HarveyIO implements ActionListener
 
 	public void actionPerformed(ActionEvent evt) {
 		String text = textCmd.getText();
-		textArea.append("\n" + text);
+		String output = cmds.doCommand(text);
+		textArea.append("\n" + output);
 		textCmd.setText("");
 
 		//Make sure the new text is visible, even if there
