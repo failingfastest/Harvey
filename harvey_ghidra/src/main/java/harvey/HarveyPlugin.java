@@ -15,6 +15,8 @@
  */
 package harvey;
 
+import harvey.HarveyIO;
+
 import java.awt.BorderLayout;
 import java.awt.*;
 import java.awt.event.*;
@@ -76,44 +78,18 @@ public class HarveyPlugin extends ProgramPlugin {
 	}
 
 	// TODO: If provider is desired, it is recommended to move it to its own file
-	private static class MyProvider extends ComponentProvider implements ActionListener {
+	private static class MyProvider extends ComponentProvider {
 
 
-		private JPanel panel;
 		private DockingAction action;
-		protected JTextField textCmd;
-		protected JTextArea textArea;
+		protected HarveyIO harveyIo;
 
-		public MyProvider(Plugin plugin, String owner) {
+		public MyProvider(HarveyPlugin plugin, String owner) {
 			super(plugin.getTool(), owner, owner);
 
-			textCmd = new JTextField(20);
-			textCmd.setEditable(true);
-			textCmd.addActionListener(this);
-
-			textArea = new JTextArea(5, 25);
-			textArea.setEditable(false);
-
-			buildPanel();
+			harveyIo = new HarveyIO(plugin);
 			createActions();
-		}
-
-		// Customize GUI
-		private void buildPanel() {
-			panel = new JPanel(new BorderLayout());
-			panel.add(new JScrollPane(textArea), BorderLayout.PAGE_START);
-			panel.add(textCmd, BorderLayout.PAGE_END);
 			setVisible(true);
-		}
-
-		public void actionPerformed(ActionEvent evt) {
-			String text = textCmd.getText();
-			textArea.append("\n" + text);
-			textCmd.setText("");
-
-			//Make sure the new text is visible, even if there
-			//was a selection in the text area.
-			textArea.setCaretPosition(textArea.getDocument().getLength());
 		}
 
 		// TODO: Customize actions
@@ -121,7 +97,7 @@ public class HarveyPlugin extends ProgramPlugin {
 			action = new DockingAction("My Action", getName()) {
 				@Override
 				public void actionPerformed(ActionContext context) {
-					Msg.showInfo(getClass(), panel, "Custom Action", "Hello!");
+					Msg.showInfo(getClass(), harveyIo.getPanel(), "Custom Action", "Hello!");
 				}
 			};
 			action.setToolBarData(new ToolBarData(Icons.ADD_ICON, null));
@@ -132,7 +108,7 @@ public class HarveyPlugin extends ProgramPlugin {
 
 		@Override
 		public JComponent getComponent() {
-			return panel;
+			return harveyIo.getPanel();
 		}
 	}
 }
