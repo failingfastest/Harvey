@@ -58,6 +58,7 @@ dependencies {
 	// Any external dependencies added here will automatically be copied to the lib/ directory when
 	// this extension is built.	
 	testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
 }
 
 test {
