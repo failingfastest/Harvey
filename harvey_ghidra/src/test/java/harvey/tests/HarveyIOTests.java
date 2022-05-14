@@ -19,16 +19,16 @@ class HarveyIOTests {
 		HarveyCmds c = new HarveyCmds(null);
 		HarveyIO h = new HarveyIO(null, c);
 
-		h.textCmd.setText("echo one");
+		h.textCmd.setText("echo one=two");
 		h.actionPerformed(null);
 
-		assertEquals("\nECHO: one:", h.textArea.getText());
+		assertEquals("\nECHO: one:two", h.textArea.getText());
 		assertEquals("", h.textCmd.getText());
 
-		h.textCmd.setText("echo two=something");
+		h.textCmd.setText("echo one=two two=something");
 		h.actionPerformed(null);
 
-		assertEquals("\nECHO: one:\nECHO: two:something", h.textArea.getText());
+		assertEquals("\nECHO: one:two\nECHO: one:two two:something", h.textArea.getText());
 		assertEquals("", h.textCmd.getText());
 	}
 
@@ -45,26 +45,14 @@ class HarveyIOTests {
 	}
 
 	@Test
-	public void testCommandNotProvided() {
+	public void testTypes() {
 		HarveyCmds c = new HarveyCmds(null);
 		HarveyIO h = new HarveyIO(null, c);
 
-		h.textCmd.setText("jsoncmd {\"not_cmd\": \"no_command\"}");
+		h.textCmd.setText("testTypes one=a\\ string two=0x123 three=abcd four=true");
 		h.actionPerformed(null);
 
-		assertEquals("\nerror: no command provided", h.textArea.getText());
-		assertEquals("", h.textCmd.getText());
-	}
-
-	@Test
-	public void testEchoJson() {
-		HarveyCmds c = new HarveyCmds(null);
-		HarveyIO h = new HarveyIO(null, c);
-
-		h.textCmd.setText("jsoncmd {\"cmd\": \"echo\", \"arg1\": 1}");
-		h.actionPerformed(null);
-
-		assertEquals("\nECHO: arg1:1", h.textArea.getText());
+		assertEquals("\nSuccess", h.textArea.getText());
 		assertEquals("", h.textCmd.getText());
 	}
 
