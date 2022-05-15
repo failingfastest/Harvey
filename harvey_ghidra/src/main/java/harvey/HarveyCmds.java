@@ -87,7 +87,9 @@ public class HarveyCmds {
 					i_equals = i_arg;
 				}
 
-				arg += c;
+				if (!haveSlash) {
+					arg += c;
+				}
 			}
 
 			if (i_char + i_arg >= line.length()) {

@@ -46,6 +46,7 @@ public class HarveyIO implements ActionListener
 
 		panel = new JPanel(new BorderLayout());
 		panel.add(new JScrollPane(textArea), BorderLayout.PAGE_START);
+		panel.setPreferredSize(new Dimension(400, 400));
 		panel.add(textCmd, BorderLayout.PAGE_END);
 	}
 

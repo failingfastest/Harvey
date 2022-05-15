@@ -85,13 +85,13 @@ public class HarveyPlugin extends ProgramPlugin {
 		public HarveyIO harveyIo;
 		public HarveyCmds cmds;
 
-		public MyProvider(HarveyPlugin plugin, String owner) {
+		public MyProvider(Plugin plugin, String owner) {
 			super(plugin.getTool(), owner, owner);
 
-			cmds = new HarveyCmds(plugin);
-			harveyIo = new HarveyIO(plugin, cmds);
-			createActions();
+			cmds = new HarveyCmds((HarveyPlugin)plugin);
+			harveyIo = new HarveyIO((HarveyPlugin)plugin, cmds);
 			setVisible(true);
+			createActions();
 		}
 
 		// TODO: Customize actions
