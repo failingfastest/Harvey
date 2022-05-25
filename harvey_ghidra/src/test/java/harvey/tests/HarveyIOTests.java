@@ -1,4 +1,5 @@
-
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2022 Daniel Farrell (djfarrell@failingfastest.com)
 package harvey.tests;
 
 import harvey.HarveyIO;
