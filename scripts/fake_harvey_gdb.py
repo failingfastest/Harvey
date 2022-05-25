@@ -32,6 +32,8 @@ def serve():
         d = json.loads(j)
         print(d)
         d['type'] = 'result';
+        d['return'] = d['args']
+        d.pop('args')
         j = json.dumps(d).encode()
         length_bytes = struct.pack('=Q', len(j))
         print('sending: ' + binascii.b2a_hex(length_bytes).decode())

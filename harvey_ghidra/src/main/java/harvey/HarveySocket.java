@@ -57,7 +57,7 @@ class HarveySocket implements Runnable {
 	public void run() {
 		while (keepRunning) {
 
-			if (!channel.isConnected()) {
+			if (channel == null || !channel.isConnected()) {
 				plugin.debug("not connected");
 				try {
 					Thread.sleep(100);
@@ -98,6 +98,18 @@ class HarveySocket implements Runnable {
 		channel.register(selector, SelectionKey.OP_READ);
 	}
 
+	public void closeSocket() {
+		if (channel != null) {
+			try {
+				channel.socket().close();
+			} catch (IOException ioe) {
+				plugin.log(ioe.toString());
+			}
+		}
+
+		channel = null;
+	}
+
 	public void recv() {
 		int readLength = 0;
 		long jsonLength = 0;
@@ -112,12 +124,16 @@ class HarveySocket implements Runnable {
 			while (lengthOffset < 8) {
 				plugin.debug("length");
 				waitForInput();
+				if (channel == null || !channel.isConnected()) {
+					closeSocket();
+					return;
+				}
 				if (inputRemaining == 0) {
 					try {
 						input.clear();
 						inputRemaining = channel.read(input);
-						if (inputRemaining == 0) {
-							channel = null;
+						if (inputRemaining <= 0) {
+							closeSocket();
 							return;
 						}
 						input.flip();
@@ -127,12 +143,16 @@ class HarveySocket implements Runnable {
 					}
 				}
 
-				if (inputRemaining >= lengthArray.length - lengthOffset) {
+				if (inputRemaining < 0) {
+					
+					closeSocket();
+				} else if (inputRemaining >= lengthArray.length - lengthOffset) {
 					plugin.debug("got all length");
 					input.get(lengthArray, lengthOffset, lengthArray.length - lengthOffset);
 					lengthOffset = lengthArray.length;
 					inputRemaining -= lengthArray.length;
 				} else {
+					plugin.debug("length offset: " + Integer.toString(lengthOffset));
 					input.get(lengthArray, lengthOffset, inputRemaining);
 					lengthOffset += inputRemaining;
 					inputRemaining = 0;
@@ -156,8 +176,8 @@ class HarveySocket implements Runnable {
 						input.clear();
 						waitForInput();
 						inputRemaining = channel.read(input);
-						if (inputRemaining == 0) {
-							channel = null;
+						if (inputRemaining <= 0) {
+							closeSocket();
 							return;
 						}
 						input.flip();
@@ -167,7 +187,9 @@ class HarveySocket implements Runnable {
 					}
 				}
 
-				if (commandOffset + inputRemaining >= (int)jsonLength ) {
+				if (inputRemaining < 0) {
+					closeSocket();
+				} else if (commandOffset + inputRemaining >= (int)jsonLength ) {
 					plugin.debug("got all of command");
 					input.get(commandArray, commandOffset, (int)jsonLength - commandOffset);
 					String jsonString = new String(commandArray, 0, (int)jsonLength);
@@ -175,7 +197,7 @@ class HarveySocket implements Runnable {
 					inputRemaining -= ((int)jsonLength - commandOffset);
 					commandOffset = (int)jsonLength;
 					break;
-				} else {
+				} else if (inputRemaining > 0) {
 					input.get(commandArray, commandOffset, inputRemaining);
 					commandOffset += inputRemaining;
 					inputRemaining = 0;
