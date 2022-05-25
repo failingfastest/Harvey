@@ -4,8 +4,11 @@ import harvey.HarveyPlugin;
 import harvey.HarveyCmd;
 import harvey.EchoCmd;
 import harvey.TypesTestCmd;
+import harvey.HarveySocketConnectCmd;
+import harvey.DebugCmd;
 
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
@@ -14,14 +17,17 @@ import java.util.ArrayList;
 public class HarveyCmds {
 
 	public HarveyPlugin plugin;
-	public Map<String, HarveyCmd> commands;
+	public Map<String, Supplier<HarveyCmd>> commands;
 	public Map<Character, Character> controlChars;
 
 	public HarveyCmds(HarveyPlugin _plugin) {
 		plugin = _plugin;
-		commands = new HashMap<String, HarveyCmd>();
-		commands.put("echo", new EchoCmd());
-		commands.put("testTypes", new TypesTestCmd());
+		commands = new HashMap<String, Supplier<HarveyCmd>>();
+		commands.put("echo", EchoCmd::create);
+		commands.put("remote_echo", RemoteEchoCmd::create);
+		commands.put("testTypes", TypesTestCmd::create);
+		commands.put("connect", HarveySocketConnectCmd::create);
+		commands.put("debug", DebugCmd::create);
 
 		controlChars = new HashMap<Character, Character>();
 
@@ -51,10 +57,11 @@ public class HarveyCmds {
 			return "error: no command provided";
 		}
 
-		HarveyCmd func = commands.get(cmd);
-		if (func == null) {
+		Supplier<HarveyCmd> supplier = commands.get(cmd);
+		if (supplier == null) {
 			return "error: command does not exist";
 		}
+		HarveyCmd cmdObj = supplier.get();
 		for (; i_char < line.length(); i_char++) {
 			String arg = "";
 			List<String> parts = new ArrayList<String>();
@@ -99,7 +106,7 @@ public class HarveyCmds {
 			i_char += i_arg;
 		}
 
-		return func.apply(plugin, args);
+		return cmdObj.apply(plugin, args);
 	}
 }
 

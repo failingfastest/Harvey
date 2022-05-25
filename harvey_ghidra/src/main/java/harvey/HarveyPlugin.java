@@ -50,7 +50,8 @@ import resources.Icons;
 //@formatter:on
 public class HarveyPlugin extends ProgramPlugin {
 
-	MyProvider provider;
+	public MyProvider provider;
+	public boolean debug_;
 
 	/**
 	 * Plugin constructor.
@@ -60,6 +61,7 @@ public class HarveyPlugin extends ProgramPlugin {
 	public HarveyPlugin(PluginTool tool) {
 		super(tool, true, true);
 
+		debug_ = false;
 		// TODO: Customize provider (or remove if a provider is not desired)
 		String pluginName = getName();
 		provider = new MyProvider(this, pluginName);
@@ -70,6 +72,26 @@ public class HarveyPlugin extends ProgramPlugin {
 		provider.setHelpLocation(new HelpLocation(topicName, anchorName));
 	}
 
+	public void setDebug(boolean newDebug) {
+		debug_ = newDebug;
+	}
+
+	public void log(String line) {
+		if (provider != null && provider.harveyIo != null) {
+			provider.harveyIo.log(line);
+		}
+	}
+
+	public void debug(String line) {
+		if (debug_) {
+			log(line);
+		}
+	}
+
+	public HarveySocket getSocket() {
+		return provider.harveyIo.harveySocket;
+	}
+
 	@Override
 	public void init() {
 		super.init();
@@ -78,7 +100,7 @@ public class HarveyPlugin extends ProgramPlugin {
 	}
 
 	// TODO: If provider is desired, it is recommended to move it to its own file
-	private static class MyProvider extends ComponentProvider {
+	public static class MyProvider extends ComponentProvider {
 
 
 		private DockingAction action;
@@ -90,6 +112,8 @@ public class HarveyPlugin extends ProgramPlugin {
 
 			cmds = new HarveyCmds((HarveyPlugin)plugin);
 			harveyIo = new HarveyIO((HarveyPlugin)plugin, cmds);
+			harveyIo.start();
+
 			setVisible(true);
 			createActions();
 		}

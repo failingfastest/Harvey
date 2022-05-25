@@ -1,12 +1,16 @@
 package harvey;
 
 import harvey.HarveyPlugin;
+import harvey.HarveySocket;
 
 import java.awt.BorderLayout;
 import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
+
+import java.io.IOException;
+import java.lang.Thread;
 
 import docking.ActionContext;
 import docking.ComponentProvider;
@@ -28,6 +32,8 @@ public class HarveyIO implements ActionListener
 	public JTextArea textArea;
 	public HarveyPlugin plugin;
 	public HarveyCmds cmds;
+	public HarveySocket harveySocket;
+	public Thread harveySocketThread;
 
 	public HarveyIO(HarveyPlugin _plugin, HarveyCmds _cmds) {
 		plugin = _plugin;
@@ -36,29 +42,44 @@ public class HarveyIO implements ActionListener
 		buildGui();
 	}
 
+	public void start() {
+		try {
+			harveySocket = new HarveySocket(plugin, this);
+			harveySocketThread = new Thread(harveySocket);
+			harveySocketThread.start();
+		} catch (IOException ioe) {
+		}
+	}
+
 	public void buildGui() {
 		textCmd = new JTextField(20);
 		textCmd.setEditable(true);
 		textCmd.addActionListener(this);
 
-		textArea = new JTextArea(5, 25);
+		textArea = new JTextArea(50, 25);
 		textArea.setEditable(false);
 
 		panel = new JPanel(new BorderLayout());
-		panel.add(new JScrollPane(textArea), BorderLayout.PAGE_START);
-		panel.setPreferredSize(new Dimension(400, 400));
+		JScrollPane scrollPane = new JScrollPane(textArea);
+		panel.add(scrollPane, BorderLayout.PAGE_START);
+		scrollPane.setPreferredSize(new Dimension(400, 400));
 		panel.add(textCmd, BorderLayout.PAGE_END);
 	}
 
 	public void actionPerformed(ActionEvent evt) {
 		String text = textCmd.getText();
 		String output = cmds.doCommand(text);
-		textArea.append("\n" + output);
+		log(text);
+		log(output);
 		textCmd.setText("");
 
 		//Make sure the new text is visible, even if there
 		//was a selection in the text area.
 		textArea.setCaretPosition(textArea.getDocument().getLength());
+	}
+
+	public void log(String line) {
+		textArea.append("\n" + line);
 	}
 
 	public JPanel getPanel() {

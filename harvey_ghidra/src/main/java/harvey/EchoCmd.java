@@ -15,6 +15,10 @@ public class EchoCmd extends HarveyCmd {
 		params.put("two", "string");
 	}
 
+	static public EchoCmd create() {
+		return new EchoCmd();
+	}
+
 	String applyImpl(HarveyPlugin plugin, Map<String, String> args) {
 		String output = "ECHO: ";
 		int index = 0;

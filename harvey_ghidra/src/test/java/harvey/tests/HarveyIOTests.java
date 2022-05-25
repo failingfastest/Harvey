@@ -22,13 +22,13 @@ class HarveyIOTests {
 		h.textCmd.setText("echo one=two");
 		h.actionPerformed(null);
 
-		assertEquals("\nECHO: one:two", h.textArea.getText());
+		assertEquals("\necho one=two\nECHO: one:two", h.textArea.getText());
 		assertEquals("", h.textCmd.getText());
 
 		h.textCmd.setText("echo one=two two=something");
 		h.actionPerformed(null);
 
-		assertEquals("\nECHO: one:two\nECHO: one:two two:something", h.textArea.getText());
+		assertEquals("\necho one=two\nECHO: one:two\necho one=two two=something\nECHO: one:two two:something", h.textArea.getText());
 		assertEquals("", h.textCmd.getText());
 	}
 
@@ -40,7 +40,7 @@ class HarveyIOTests {
 		h.textCmd.setText("not a command");
 		h.actionPerformed(null);
 
-		assertEquals("\nerror: command does not exist", h.textArea.getText());
+		assertEquals("\nnot a command\nerror: command does not exist", h.textArea.getText());
 		assertEquals("", h.textCmd.getText());
 	}
 
@@ -52,7 +52,7 @@ class HarveyIOTests {
 		h.textCmd.setText("testTypes one=a\\ string two=0x123 three=abcd four=true");
 		h.actionPerformed(null);
 
-		assertEquals("\nSuccess", h.textArea.getText());
+		assertEquals("\ntestTypes one=a\\ string two=0x123 three=abcd four=true\nSuccess", h.textArea.getText());
 		assertEquals("", h.textCmd.getText());
 	}
 

@@ -45,7 +45,8 @@ class Server:
         
     def run_thread(self):
     
-        self.t = threading.Thread(target=self.run)
+        self.t = threading.Thread(target=self.run, args=tuple())
+        self.t.daemon = True
         self.t.start()
 
 

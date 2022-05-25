@@ -9,19 +9,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 
-public class TypesTestCmd extends HarveyCmd {
-	public TypesTestCmd() {
-		params.put("one", "string");
-		params.put("two", "int");
-		params.put("three", "hexBytes");
-		params.put("four", "bool");
+public class DebugCmd extends HarveyCmd {
+	public DebugCmd() {
+		params.put("value", "bool");
 	}
 
-	static public TypesTestCmd create() {
-		return new TypesTestCmd();
+	static public DebugCmd create() {
+		return new DebugCmd();
 	}
 
 	String applyImpl(HarveyPlugin plugin, Map<String, String> args) {
+		String value = args.get("value");
+
+		if (value.toLowerCase().equals("true")) {
+			plugin.setDebug(true);
+		} else {
+			plugin.setDebug(false);
+		}
+
 		return "Success";
 	}
 }

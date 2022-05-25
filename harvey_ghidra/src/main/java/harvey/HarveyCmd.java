@@ -35,6 +35,11 @@ public class HarveyCmd {
 
 	public Map<String, String> params;
 	public Map<Character, Integer> hexChars;
+	public String id;
+
+	public void setId(String id_) {
+		id = id_;
+	}
 
 	public String getName() {
 		return null;
