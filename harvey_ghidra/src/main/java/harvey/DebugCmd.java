@@ -20,6 +20,10 @@ public class DebugCmd extends HarveyCmd {
 		return new DebugCmd();
 	}
 
+	public String getCmdName() {
+		return "debug";
+	}
+
 	String applyImpl(HarveyPlugin plugin, Map<String, String> args) {
 		String value = args.get("value");
 

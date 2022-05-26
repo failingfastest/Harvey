@@ -64,5 +64,3 @@ class TcpServer(Server):
         s.setblocking(False)
 
         Server.__init__(self, s)
-
-

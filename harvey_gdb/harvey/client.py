@@ -25,24 +25,38 @@ class Client:
 
     def on_data(self):
 
-        data = self.s.recv(4096)
-        if len(data) == 0:
-            self.on_close()
-            return
+        while True:
 
-        self.buffer = self.buffer + data
-
-        if (len(self.buffer) > LENGTH_S.size) and (len(self.buffer) == LENGTH_S.unpack_from(self.buffer)[0] + LENGTH_S.size):
-            cmd = self.buffer[LENGTH_S.size:]
-
-            d = None
             try:
-                d = json.loads(cmd)
-            except Exception as e:
-                print(e)
-                self.on_close()
+                data = self.s.recv(4096)
+            except BlockingIOError:
+                break
 
-            command.run_command(self, d)
+            if len(data) == 0:
+                self.on_close()
+                return
+
+            self.buffer = self.buffer + data
+
+            if (len(self.buffer) > LENGTH_S.size):
+                json_length = LENGTH_S.unpack_from(self.buffer)[0]
+                self.buffer = self.buffer[LENGTH_S.size:]
+
+                if len(self.buffer) >= json_length:
+
+                    cmd = self.buffer[:json_length]
+                    self.buffer = self.buffer[json_length:]
+                    d = None
+                    try:
+                        d = json.loads(cmd)
+                    except Exception as e:
+                        print(e)
+                        self.on_close()
+                        return
+                    self.on_input(d)
+
+    def on_input(self, d):
+        command.on_input(self, d)
 
     def on_close(self):
 

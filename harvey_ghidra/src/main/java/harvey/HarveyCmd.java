@@ -38,6 +38,10 @@ public class HarveyCmd {
 	public Map<Character, Integer> hexChars;
 	public String id;
 
+	public String getCmdName() {
+		return "<no-cmd>";
+	}
+
 	public void setId(String id_) {
 		id = id_;
 	}

@@ -15,7 +15,7 @@ class HarveyCmd:
 
         pass
 
-    def run(self, args):
+    def run(self, client, args):
 
         pass
 
@@ -28,13 +28,15 @@ class EchoCmd(HarveyCmd):
     def __init__(self):
         HarveyCmd.__init__(self)
 
-    def run(self, args):
+    def run(self, client, input_):
 
-        print(args)
+        print(input_)
 
         r = {
             'success': True,
-            'return': args,
+            'return': input_['args'],
+            'type': 'result',
+            'id': input_['id'],
         }
 
         ret = result.HarveyResult(r)
@@ -51,16 +53,21 @@ def add_command(cmd_class):
     commands[cmd_class.NAME] = cmd_class()
 
 
-def run_command(client, cmd):
+def on_input(client, input_):
 
-    cmd_name = cmd['cmd']
-    args = cmd['args']
+    if input_['type'] == 'result':
+        if input_['id'] in current_command:
+            lcmd = current_command.pop(input_['id'])
+            lcmd.handle_result(client, input_)
+    elif input_['type'] == 'command':
+        cmd_name = input_['cmd']
+        args = input_['args']
 
-    if cmd_name not in commands:
-        print('error: command does not exist')
-    else:
-        r = commands[cmd_name].run(args)
-        client.send_result(r)
+        if cmd_name not in commands:
+            print('error: command does not exist')
+        else:
+            r = commands[cmd_name].run(client, input_)
+            client.send_result(r)
 
 
 add_command(EchoCmd)

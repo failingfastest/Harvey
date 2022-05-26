@@ -26,6 +26,10 @@ public class RemoteEchoCmd extends RemoteHarveyCmd {
 		return new RemoteEchoCmd();
 	}
 
+	public String getCmdName() {
+		return "echo";
+	}
+
 	String applyImpl(HarveyPlugin plugin, Map<String, String> args) {
 		JSONObject cmd = plugin.getSocket().getCmdJsonObj(this);
 

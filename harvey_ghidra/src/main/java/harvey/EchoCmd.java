@@ -21,6 +21,10 @@ public class EchoCmd extends HarveyCmd {
 		return new EchoCmd();
 	}
 
+	public String getCmdName() {
+		return "lecho";
+	}
+
 	String applyImpl(HarveyPlugin plugin, Map<String, String> args) {
 		String output = "ECHO: ";
 		int index = 0;

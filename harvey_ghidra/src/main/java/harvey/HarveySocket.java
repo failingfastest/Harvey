@@ -267,6 +267,7 @@ class HarveySocket implements Runnable {
 
 		j.put("type", "command");
 		j.put("id", idString);
+		j.put("cmd", cmd.getCmdName());
 		cmd.setId(idString);
 		commands.put(idString, cmd);
 		id++;

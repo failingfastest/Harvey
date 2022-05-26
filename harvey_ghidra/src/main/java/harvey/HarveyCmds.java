@@ -25,11 +25,11 @@ public class HarveyCmds {
 	public HarveyCmds(HarveyPlugin _plugin) {
 		plugin = _plugin;
 		commands = new HashMap<String, Supplier<HarveyCmd>>();
-		commands.put("echo", EchoCmd::create);
-		commands.put("remote_echo", RemoteEchoCmd::create);
-		commands.put("testTypes", TypesTestCmd::create);
-		commands.put("connect", HarveySocketConnectCmd::create);
-		commands.put("debug", DebugCmd::create);
+		commands.put(new EchoCmd().getCmdName(), EchoCmd::create);
+		commands.put(new RemoteEchoCmd().getCmdName(), RemoteEchoCmd::create);
+		commands.put(new TypesTestCmd().getCmdName(), TypesTestCmd::create);
+		commands.put(new HarveySocketConnectCmd().getCmdName(), HarveySocketConnectCmd::create);
+		commands.put(new DebugCmd().getCmdName(), DebugCmd::create);
 
 		controlChars = new HashMap<Character, Character>();
 

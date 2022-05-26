@@ -23,6 +23,10 @@ public class TypesTestCmd extends HarveyCmd {
 		return new TypesTestCmd();
 	}
 
+	public String getCmdName() {
+		return "testTypes";
+	}
+
 	String applyImpl(HarveyPlugin plugin, Map<String, String> args) {
 		return "Success";
 	}

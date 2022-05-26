@@ -24,6 +24,10 @@ public class HarveySocketConnectCmd extends HarveyCmd {
 		return new HarveySocketConnectCmd();
 	}
 
+	public String getCmdName() {
+		return "connect";
+	}
+
 	String applyImpl(HarveyPlugin plugin, Map<String, String> args) {
 		String host = args.get("host");
 		int port = Integer.parseInt(args.get("port"));
