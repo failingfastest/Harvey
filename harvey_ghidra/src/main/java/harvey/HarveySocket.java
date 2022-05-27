@@ -162,7 +162,7 @@ class HarveySocket implements Runnable {
 			jsonLength = 0;
 			int shift = 0;
 			for (int i = 0; i < 8; i++) {
-				jsonLength += ((long)lengthArray[i]) << shift;
+				jsonLength += (((long)lengthArray[i])&0xff) << shift;
 				shift += 8;
 			}
 

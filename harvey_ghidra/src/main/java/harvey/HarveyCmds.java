@@ -8,6 +8,7 @@ import harvey.EchoCmd;
 import harvey.TypesTestCmd;
 import harvey.HarveySocketConnectCmd;
 import harvey.DebugCmd;
+import harvey.GdbRawCmd;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -30,6 +31,7 @@ public class HarveyCmds {
 		commands.put(new TypesTestCmd().getCmdName(), TypesTestCmd::create);
 		commands.put(new HarveySocketConnectCmd().getCmdName(), HarveySocketConnectCmd::create);
 		commands.put(new DebugCmd().getCmdName(), DebugCmd::create);
+		commands.put(new GdbRawCmd().getCmdName(), GdbRawCmd::create);
 
 		controlChars = new HashMap<Character, Character>();
 

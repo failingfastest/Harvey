@@ -4,6 +4,7 @@
 import sys
 import json
 from . import result
+from . import pygdb
 
 
 class HarveyCmd:
@@ -43,6 +44,41 @@ class EchoCmd(HarveyCmd):
 
         return ret
 
+
+class GdbExecCmd(HarveyCmd):
+
+    NAME = 'gdbRaw'
+    HELP = 'performs gdb.execute()'
+
+    def __init__(self):
+        HarveyCmd.__init__(self)
+
+    def run(self, client, input_):
+
+        print(input_)
+
+        gdb = pygdb.get_gdb()
+        cmd = input_['args']['cmd']
+
+        try:
+            output = gdb.execute(cmd, True, True)
+        except Exception as e:
+            output = str(e)
+
+        r = {
+            'success': True,
+            'return': { 
+                'output': output,
+            },
+            'type': 'result',
+            'id': input_['id'],
+        }
+
+        ret = result.HarveyResult(r)
+
+        return ret
+
+
 commands = {}
 
 
@@ -71,4 +107,5 @@ def on_input(client, input_):
 
 
 add_command(EchoCmd)
+add_command(GdbExecCmd)
 
