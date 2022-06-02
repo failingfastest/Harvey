@@ -15,4 +15,5 @@ class HarveyResult:
 
         r = json.dumps(self.r).encode()
         o = struct.pack('=Q', len(r)) + r
+
         return o

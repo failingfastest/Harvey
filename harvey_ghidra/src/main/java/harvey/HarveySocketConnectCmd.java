@@ -18,6 +18,8 @@ public class HarveySocketConnectCmd extends HarveyCmd {
 	public HarveySocketConnectCmd() {
 		params.put("host", "string");
 		params.put("port", "int");
+		defaults.put("host", "127.0.0.1");
+		defaults.put("port", "12345");
 	}
 
 	static public HarveySocketConnectCmd create() {

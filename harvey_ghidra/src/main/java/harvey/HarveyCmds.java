@@ -9,6 +9,8 @@ import harvey.TypesTestCmd;
 import harvey.HarveySocketConnectCmd;
 import harvey.DebugCmd;
 import harvey.GdbRawCmd;
+import harvey.GdbRunCmd;
+import harvey.BreakCmd;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -32,6 +34,10 @@ public class HarveyCmds {
 		commands.put(new HarveySocketConnectCmd().getCmdName(), HarveySocketConnectCmd::create);
 		commands.put(new DebugCmd().getCmdName(), DebugCmd::create);
 		commands.put(new GdbRawCmd().getCmdName(), GdbRawCmd::create);
+		commands.put(new GdbSymbolCmd().getCmdName(), GdbSymbolCmd::create);
+		commands.put(new GdbStartCmd().getCmdName(), GdbStartCmd::create);
+		commands.put(new GdbRunCmd().getCmdName(), GdbRunCmd::create);
+		commands.put(new BreakCmd().getCmdName(), BreakCmd::create);
 
 		controlChars = new HashMap<Character, Character>();
 
@@ -56,9 +62,11 @@ public class HarveyCmds {
 				break;
 			}
 		}
-		while (line.charAt(i_char) == ' ') { i_char++; }
-		if (i_char >= line.length()) {
-			return "error: no command provided";
+		if (i_char < line.length()) {
+			while (line.charAt(i_char) == ' ') { i_char++; }
+			if (i_char >= line.length()) {
+				return "error: no command provided";
+			}
 		}
 
 		Supplier<HarveyCmd> supplier = commands.get(cmd);

@@ -20,16 +20,16 @@ class HarveyIOTests {
 		HarveyCmds c = new HarveyCmds(null);
 		HarveyIO h = new HarveyIO(null, c);
 
-		h.textCmd.setText("lecho one=two");
+		h.textCmd.setText("lecho one=two two=one");
 		h.actionPerformed(null);
 
-		assertEquals("\nlecho one=two\nECHO: one:two", h.textArea.getText());
+		assertEquals("\nlecho one=two two=one\nECHO: one:two two:one", h.textArea.getText());
 		assertEquals("", h.textCmd.getText());
 
 		h.textCmd.setText("lecho one=two two=something");
 		h.actionPerformed(null);
 
-		assertEquals("\nlecho one=two\nECHO: one:two\nlecho one=two two=something\nECHO: one:two two:something", h.textArea.getText());
+		assertEquals("\nlecho one=two two=one\nECHO: one:two two:one\nlecho one=two two=something\nECHO: one:two two:something", h.textArea.getText());
 		assertEquals("", h.textCmd.getText());
 	}
 

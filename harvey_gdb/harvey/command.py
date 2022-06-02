@@ -5,12 +5,14 @@ import sys
 import json
 from . import result
 from . import pygdb
+from . import main_loop
 
 
 class HarveyCmd:
 
     NAME = None
     HELP = None
+    MAIN = False
 
     def __init__(self):
 
@@ -55,8 +57,6 @@ class GdbExecCmd(HarveyCmd):
 
     def run(self, client, input_):
 
-        print(input_)
-
         gdb = pygdb.get_gdb()
         cmd = input_['args']['cmd']
 
@@ -79,6 +79,84 @@ class GdbExecCmd(HarveyCmd):
         return ret
 
 
+class GdbRunCmd(GdbExecCmd):
+
+    NAME = 'gdbRun'
+    HELP = 'Runs run in main loop'
+    MAIN = True
+
+    def run(self, client, input_):
+
+        return GdbExecCmd.run(self, client, input_)
+
+
+class GdbSymbolCmd(HarveyCmd):
+
+    NAME = 'gdbSymbol'
+    HELP = 'resolves a symbol'
+
+    def __init__(self):
+        HarveyCmd.__init__(self)
+
+    def run(self, client, input_):
+
+        gdb = pygdb.get_gdb()
+        symbol = input_['args']['symbol']
+        success = True
+
+        try:
+            output = gdb.execute(f'printf "%x", {symbol}', True, True)
+            output = int(output, 16)
+        except Exception as e:
+            output = str(e)
+            success = False
+
+        r = {
+            'success': success,
+            'return': { 
+                'output': output,
+            },
+            'type': 'result',
+            'id': input_['id'],
+        }
+
+        ret = result.HarveyResult(r)
+
+        return ret
+
+
+class BreakCmd(HarveyCmd):
+
+    NAME = 'break'
+    HELP = 'adds a breakpoint'
+    MAIN = True
+
+    def __init__(self):
+        HarveyCmd.__init__(self)
+
+    def run(self, client, input_):
+
+        gdb = pygdb.get_gdb()
+        address = input_['args']['address']
+
+        try:
+            output = gdb.execute(f'break *0x{address:x}', True, True)
+        except Exception as e:
+            output = str(e)
+
+        r = {
+            'success': True,
+            'return': { 
+                'output': output,
+            },
+            'type': 'result',
+            'id': input_['id'],
+        }
+
+        ret = result.HarveyResult(r)
+
+        return ret
+
 commands = {}
 
 
@@ -90,6 +168,7 @@ def add_command(cmd_class):
 
 
 def on_input(client, input_):
+    print(f'on_input: {str(input_)}')
 
     if input_['type'] == 'result':
         if input_['id'] in current_command:
@@ -102,10 +181,16 @@ def on_input(client, input_):
         if cmd_name not in commands:
             print('error: command does not exist')
         else:
-            r = commands[cmd_name].run(client, input_)
-            client.send_result(r)
+            command = commands[cmd_name]
+            if command.MAIN:
+                main_loop.MAIN_LOOP.add_work(command, client, input_)
+            else:
+                r = command.run(client, input_)
+                client.send_result(r)
 
 
 add_command(EchoCmd)
 add_command(GdbExecCmd)
-
+add_command(GdbSymbolCmd)
+add_command(GdbRunCmd)
+add_command(BreakCmd)

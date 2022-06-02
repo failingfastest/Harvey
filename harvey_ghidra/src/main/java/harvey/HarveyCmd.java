@@ -15,6 +15,8 @@ import java.util.ArrayList;
 public class HarveyCmd {
 	public HarveyCmd() {
 		params = new HashMap<String, String>();
+		defaults = new HashMap<String, String>();
+		inArgs = new HashMap<String, String>();
 		hexChars = new HashMap<Character, Integer>();
 		hexChars.put('0', 0);
 		hexChars.put('1', 1);
@@ -35,8 +37,10 @@ public class HarveyCmd {
 	}
 
 	public Map<String, String> params;
+	public Map<String, String> defaults;
 	public Map<Character, Integer> hexChars;
 	public String id;
+	public Map<String, String> inArgs;
 
 	public String getCmdName() {
 		return "<no-cmd>";
@@ -51,10 +55,26 @@ public class HarveyCmd {
 	}
 
 	public boolean checkTypes(Map<String, String> args) {
+
+		Set<String> provided = args.keySet();
+		Set<String> required = params.keySet();
+
+		for (Map.Entry<String, String> v : defaults.entrySet()) {
+			if (args.get(v.getKey()) == null) {
+				args.put(v.getKey(), v.getValue());
+			}
+		}
+		
+		if (required.retainAll(provided)) {
+			return false;
+		}
+
 		for (Map.Entry<String, String> v : args.entrySet()) {
 			String param = v.getKey();
+			String value = v.getValue();
+
 			String type = params.get(param);
-			if (type == null) {
+			if (type == null || value == null) {
 				return false;
 			}
 			if (type.equals("int")) {
@@ -74,7 +94,7 @@ public class HarveyCmd {
 
 	boolean checkInt(String value) {
 		try {
-			Integer.decode(value);
+			Long.decode(value);
 		} catch (NumberFormatException nfe) {
 		}
 		return true;
@@ -111,6 +131,9 @@ public class HarveyCmd {
 		if (!checkTypes(args)) {
 			return "error: bad arguments";
 		}
+
+		inArgs = args;
+
 		return applyImpl(plugin, args);
 	}
 

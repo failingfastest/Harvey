@@ -23,6 +23,8 @@ import ghidra.util.HelpLocation;
 import ghidra.util.Msg;
 import resources.Icons;
 
+import ghidra.program.model.listing.*;
+
 /**
  * TODO: Provide class-level documentation that describes what this plugin does.
  */
@@ -86,6 +88,10 @@ public class HarveyPlugin extends ProgramPlugin {
 		// TODO: Acquire services if necessary
 	}
 
+	public Program getProgram() {
+		return this.currentProgram;
+	}
+
 	// TODO: If provider is desired, it is recommended to move it to its own file
 	public static class MyProvider extends ComponentProvider {
 
@@ -124,4 +130,5 @@ public class HarveyPlugin extends ProgramPlugin {
 			return harveyIo.getPanel();
 		}
 	}
+
 }
