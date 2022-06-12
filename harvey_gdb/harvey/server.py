@@ -7,6 +7,10 @@ import threading
 import select
 from . import client
 
+
+SERVER = None
+
+
 class Server:
 
     def __init__(self, socket_):
@@ -52,6 +56,9 @@ class Server:
         self.t.daemon = True
         self.t.start()
 
+    def get_clients(self):
+
+        return [x for x in self.clients.values()]
 
 class TcpServer(Server):
 

@@ -224,7 +224,13 @@ class HarveySocket implements Runnable {
 			handleIncomingCommand(object, id);
 		} else if (type.equals("result")) {
 			handleIncomingResult(object, id);
+		} else if (type.equals("update")) {
+			handleIncomingUpdate(object, id);
 		}
+	}
+
+	public void handleIncomingUpdate(JSONObject j, String id) {
+		plugin.log(j.toString());
 	}
 
 	public void handleIncomingCommand(JSONObject j, String id) {

@@ -6,6 +6,7 @@ import json
 from . import result
 from . import pygdb
 from . import main_loop
+from . import breakpoints
 
 
 class HarveyCmd:
@@ -87,6 +88,10 @@ class GdbRunCmd(GdbExecCmd):
 
     def run(self, client, input_):
 
+        print(input_)
+
+        input_['args']['cmd'] = 'continue'
+
         return GdbExecCmd.run(self, client, input_)
 
 
@@ -125,6 +130,9 @@ class GdbSymbolCmd(HarveyCmd):
         return ret
 
 
+BREAKPOINTS = {}
+
+
 class BreakCmd(HarveyCmd):
 
     NAME = 'break'
@@ -139,8 +147,13 @@ class BreakCmd(HarveyCmd):
         gdb = pygdb.get_gdb()
         address = input_['args']['address']
 
+        spec = f'*0x{address:x}'
         try:
-            output = gdb.execute(f'break *0x{address:x}', True, True)
+            global BREAKPOINTS
+            if spec not in BREAKPOINTS:
+                bp = breakpoints.HarveyBP(spec)
+                BREAKPOINTS[spec] = bp
+            output = 'Done'
         except Exception as e:
             output = str(e)
 
